@@ -1,0 +1,53 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity Core_Communication is
+    Port (
+        clk : in STD_LOGIC;
+        start : in STD_LOGIC;
+        data_bus : inout STD_LOGIC_VECTOR(7 downto 0);
+        done : out STD_LOGIC
+    );
+end Core_Communication;
+
+architecture Behavioral of Core_Communication is
+    signal core1_data : STD_LOGIC_VECTOR(7 downto 0);
+    signal core2_data : STD_LOGIC_VECTOR(7 downto 0);
+    signal core1_done : STD_LOGIC := '0';
+    signal core2_done : STD_LOGIC := '0';
+    signal shared_done : STD_LOGIC := '0';
+begin
+    -- Core 1: Writes data to the bus
+    process(clk)
+    begin
+        if rising_edge(clk) and start = '1' and core1_done = '0' then
+            core1_data <= "10101010"; -- Example data
+            data_bus <= core1_data;
+            core1_done <= '1';
+        end if;
+    end process;
+
+    -- Core 2: Reads data from the bus
+    process(clk)
+    begin
+        if rising_edge(clk) and core1_done = '1' and core2_done = '0' then
+            core2_data <= data_bus;
+            core2_done <= '1';
+        end if;
+    end process;
+
+    -- Set shared done signal after both cores have completed
+    process(clk)
+    begin
+        if rising_edge(clk) and core1_done = '1' and core2_done = '1' then
+            shared_done <= '1';
+        else
+            shared_done <= '0';
+        end if;
+    end process;
+
+    done <= shared_done;
+
+end Behavioral;
