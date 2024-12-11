@@ -1,0 +1,20 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity BCDToExcess3 is
+    Port (
+        bcd_in : in STD_LOGIC_VECTOR(3 downto 0); -- 4-bit BCD input (0-9)
+        excess3_out : out STD_LOGIC_VECTOR(3 downto 0) -- 4-bit Excess-3 code output
+    );
+end BCDToExcess3;
+
+architecture Behavioral of BCDToExcess3 is
+begin
+    process(bcd_in)
+    begin
+        -- Convert the BCD input to integer and add 3 (offset)
+        -- Convert the result back to a 4-bit STD_LOGIC_VECTOR
+        excess3_out <= std_logic_vector(to_unsigned(to_integer(unsigned(bcd_in)) + 3, 4));
+    end process;
+end Behavioral;
