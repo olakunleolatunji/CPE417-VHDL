@@ -1,0 +1,53 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity Dual_Core_Processor is
+    Port (
+        clk : in STD_LOGIC;
+        start : in STD_LOGIC;
+        input_a : in STD_LOGIC_VECTOR(7 downto 0);
+        input_b : in STD_LOGIC_VECTOR(7 downto 0);
+        output_core1 : out STD_LOGIC_VECTOR(7 downto 0);
+        output_core2 : out STD_LOGIC_VECTOR(7 downto 0);
+        done : out STD_LOGIC
+    );
+end Dual_Core_Processor;
+
+architecture Behavioral of Dual_Core_Processor is
+    signal core1_result : STD_LOGIC_VECTOR(7 downto 0);
+    signal core2_result : STD_LOGIC_VECTOR(7 downto 0);
+    signal core_done : STD_LOGIC := '0';
+begin
+    -- Core 1: Simple addition task
+    process(clk)
+    begin
+        if rising_edge(clk) and start = '1' then
+            core1_result <= input_a + input_b;
+        end if;
+    end process;
+
+    -- Core 2: Simple multiplication task
+    process(clk)
+    begin
+        if rising_edge(clk) and start = '1' then
+            core2_result <= input_a * input_b;
+        end if;
+    end process;
+
+    output_core1 <= core1_result;
+    output_core2 <= core2_result;
+    done <= core_done;
+
+    -- Set done signal after both tasks are completed (for simplicity)
+    process(clk)
+    begin
+        if rising_edge(clk) and start = '1' then
+            core_done <= '1';
+        else
+            core_done <= '0';
+        end if;
+    end process;
+
+end Behavioral;
