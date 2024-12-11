@@ -1,0 +1,35 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity DecimalToBCD is
+    Port (
+        clk : in STD_LOGIC; -- Clock signal
+        reset : in STD_LOGIC; -- Reset signal
+        decimal : in STD_LOGIC_VECTOR(7 downto 0); -- Decimal input in binary
+        bcd : out STD_LOGIC_VECTOR(11 downto 0) -- BCD output (3 digits)
+    );
+end DecimalToBCD;
+
+architecture Behavioral of DecimalToBCD is
+    signal temp_decimal : INTEGER range 0 to 255;
+    signal temp_bcd : STD_LOGIC_VECTOR(11 downto 0);
+begin
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            temp_bcd <= (others => '0'); -- Clear BCD output
+        elsif rising_edge(clk) then
+            -- Convert decimal input (binary) to an integer
+            temp_decimal <= to_integer(unsigned(decimal));
+
+            -- Perform conversion
+            temp_bcd(3 downto 0) <= std_logic_vector(to_unsigned(temp_decimal mod 10, 4)); -- Ones place
+            temp_bcd(7 downto 4) <= std_logic_vector(to_unsigned((temp_decimal / 10) mod 10, 4)); -- Tens place
+            temp_bcd(11 downto 8) <= std_logic_vector(to_unsigned(temp_decimal / 100, 4)); -- Hundreds place
+        end if;
+    end process;
+
+    -- Assign output
+    bcd <= temp_bcd;
+end Behavioral;
