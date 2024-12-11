@@ -1,0 +1,50 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Direct_Mapped_Cache is
+    Port (
+        clk : in STD_LOGIC;
+        address : in STD_LOGIC_VECTOR(7 downto 0); -- Memory address
+        data_in : in STD_LOGIC_VECTOR(7 downto 0); -- Data to write
+        data_out : out STD_LOGIC_VECTOR(7 downto 0); -- Data from cache
+        write_enable : in STD_LOGIC -- Write enable signal
+    );
+end Direct_Mapped_Cache;
+
+architecture Behavioral of Direct_Mapped_Cache is
+    -- Cache arrays
+    type Cache_Data_Type is array (0 to 15) of STD_LOGIC_VECTOR(7 downto 0); -- Data storage
+    type Cache_Tag_Type is array (0 to 15) of STD_LOGIC_VECTOR(3 downto 0);  -- Tag storage
+    type Valid_Bit_Type is array (0 to 15) of STD_LOGIC; -- Valid bits
+
+    -- Signals for cache data, tags, and valid bits
+    signal cache_data : Cache_Data_Type := (others => (others => '0'));
+    signal cache_tags : Cache_Tag_Type := (others => (others => '0'));
+    signal valid_bits : Valid_Bit_Type := (others => '0');
+begin
+    process (clk)
+        variable index : integer range 0 to 15; -- Index derived from address
+        variable tag : STD_LOGIC_VECTOR(3 downto 0); -- Tag derived from address
+    begin
+        if rising_edge(clk) then
+            -- Extract the index and tag from the address
+            index := to_integer(unsigned(address(3 downto 0))); -- Convert index portion to integer
+            tag := address(7 downto 4); -- Extract tag portion
+
+            if write_enable = '1' then
+                -- Write to cache: update data, tag, and set valid bit
+                cache_data(index) <= data_in;
+                cache_tags(index) <= tag;
+                valid_bits(index) <= '1';
+            else
+                -- Read from cache
+                if valid_bits(index) = '1' and cache_tags(index) = tag then
+                    data_out <= cache_data(index); -- Cache hit
+                else
+                    data_out <= (others => 'X'); -- Cache miss (undefined data)
+                end if;
+            end if;
+        end if;
+    end process;
+end Behavioral;
