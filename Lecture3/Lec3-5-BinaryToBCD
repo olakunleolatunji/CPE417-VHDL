@@ -1,0 +1,44 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity BinaryToBCD is
+    Port (
+        binary : in STD_LOGIC_VECTOR(7 downto 0); -- 8-bit binary input
+        bcd : out STD_LOGIC_VECTOR(11 downto 0) -- BCD output (3 digits, 4 bits each)
+    );
+end BinaryToBCD;
+
+architecture Behavioral of BinaryToBCD is
+    signal temp_binary : STD_LOGIC_VECTOR(7 downto 0); -- Temporary binary value
+    signal temp_bcd : STD_LOGIC_VECTOR(11 downto 0); -- Temporary BCD value
+    signal i : INTEGER := 0; -- Loop counter
+begin
+    process(binary)
+    begin
+        -- Initialize temporary values
+        temp_binary <= binary;
+        temp_bcd <= (others => '0');
+        
+        -- Perform shift-and-add-3 algorithm
+        for i in 0 to 7 loop
+            -- Check each BCD digit for values >= 5 and add 3
+            if temp_bcd(3 downto 0) > "0100" then
+                temp_bcd(3 downto 0) <= std_logic_vector(unsigned(temp_bcd(3 downto 0)) + 3);
+            end if;
+            if temp_bcd(7 downto 4) > "0100" then
+                temp_bcd(7 downto 4) <= std_logic_vector(unsigned(temp_bcd(7 downto 4)) + 3);
+            end if;
+            if temp_bcd(11 downto 8) > "0100" then
+                temp_bcd(11 downto 8) <= std_logic_vector(unsigned(temp_bcd(11 downto 8)) + 3);
+            end if;
+            
+            -- Shift left by 1 bit
+            temp_bcd <= temp_bcd(10 downto 0) & temp_binary(7);
+            temp_binary <= temp_binary(6 downto 0) & '0';
+        end loop;
+        
+        -- Assign result to output
+        bcd <= temp_bcd;
+    end process;
+end Behavioral;
