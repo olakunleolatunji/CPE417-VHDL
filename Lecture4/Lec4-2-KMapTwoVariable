@@ -1,0 +1,14 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Two_Variable_KMap is
+    Port (
+        A, B : in STD_LOGIC;
+        F : out STD_LOGIC
+    );
+end Two_Variable_KMap;
+
+architecture Behavioral of Two_Variable_KMap is
+begin
+    F <= A OR B; -- Minimized logic from K-map
+end Behavioral;
