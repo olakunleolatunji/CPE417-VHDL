@@ -1,0 +1,62 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Vending_Machine is
+    Port (
+        CLK : in STD_LOGIC;
+        RESET : in STD_LOGIC;
+        COIN : in STD_LOGIC_VECTOR(1 downto 0);
+        DISPENSE : out STD_LOGIC
+    );
+end Vending_Machine;
+
+architecture Behavioral of Vending_Machine is
+    type state_type is (S0, S1, S2, S3);
+    signal current_state, next_state : state_type;
+begin
+    process(CLK, RESET)
+    begin
+        if RESET = '1' then
+            current_state <= S0;
+        elsif rising_edge(CLK) then
+            current_state <= next_state;
+        end if;
+    end process;
+
+    process(current_state, COIN)
+    begin
+        case current_state is
+            when S0 =>
+                if COIN = "01" then
+                    next_state <= S1;
+                elsif COIN = "10" then
+                    next_state <= S2;
+                else
+                    next_state <= S0;
+                end if;
+                DISPENSE <= '0';
+            when S1 =>
+                if COIN = "01" then
+                    next_state <= S2;
+                elsif COIN = "10" then
+                    next_state <= S3;
+                else
+                    next_state <= S1;
+                end if;
+                DISPENSE <= '0';
+            when S2 =>
+                if COIN = "01" or COIN = "10" then
+                    next_state <= S3;
+                else
+                    next_state <= S2;
+                end if;
+                DISPENSE <= '0';
+            when S3 =>
+                next_state <= S0;
+                DISPENSE <= '1';
+            when others =>
+                next_state <= S0;
+                DISPENSE <= '0';
+        end case;
+    end process;
+end Behavioral;
