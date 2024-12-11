@@ -1,0 +1,38 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity Pipeline is
+    Port (
+        clk : in STD_LOGIC;
+        reset : in STD_LOGIC;
+        instruction_in : in STD_LOGIC_VECTOR(15 downto 0);
+        result_out : out STD_LOGIC_VECTOR(15 downto 0)
+    );
+end Pipeline;
+
+architecture Behavioral of Pipeline is
+    signal IF_ID_reg, ID_EX_reg, EX_MEM_reg : STD_LOGIC_VECTOR(15 downto 0);
+begin
+    process (clk, reset)
+    begin
+        if reset = '1' then
+            IF_ID_reg <= (others => '0');
+            ID_EX_reg <= (others => '0');
+            EX_MEM_reg <= (others => '0');
+        elsif rising_edge(clk) then
+            -- Instruction Fetch (IF) stage
+            IF_ID_reg <= instruction_in;
+
+            -- Instruction Decode / Execute (ID/EX) stage
+            ID_EX_reg <= IF_ID_reg;
+
+            -- Execute / Memory (EX/MEM) stage (for demonstration)
+            EX_MEM_reg <= ID_EX_reg + "0000000000000001"; -- Just a dummy increment
+        end if;
+    end process;
+
+    -- Output result from pipeline
+    result_out <= EX_MEM_reg;
+end Behavioral;
