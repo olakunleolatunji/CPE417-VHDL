@@ -1,0 +1,39 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity Superscalar is
+    Port (
+        A1, A2, B1, B2 : in STD_LOGIC_VECTOR(7 downto 0); -- Operands for two ALUs
+        Op1, Op2 : in STD_LOGIC_VECTOR(2 downto 0);       -- Operation codes
+        Result1, Result2 : out STD_LOGIC_VECTOR(7 downto 0) -- Results
+    );
+end Superscalar;
+
+architecture Behavioral of Superscalar is
+begin
+    process (A1, B1, Op1)
+    begin
+        case Op1 is
+            when "000" => Result1 <= A1 + B1;
+            when "001" => Result1 <= A1 - B1;
+            when "010" => Result1 <= A1 and B1;
+            when "011" => Result1 <= A1 or B1;
+            when "100" => Result1 <= not A1;
+            when others => Result1 <= (others => '0');
+        end case;
+    end process;
+
+    process (A2, B2, Op2)
+    begin
+        case Op2 is
+            when "000" => Result2 <= A2 + B2;
+            when "001" => Result2 <= A2 - B2;
+            when "010" => Result2 <= A2 and B2;
+            when "011" => Result2 <= A2 or B2;
+            when "100" => Result2 <= not A2;
+            when others => Result2 <= (others => '0');
+        end case;
+    end process;
+end Behavioral;
