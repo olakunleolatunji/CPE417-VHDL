@@ -1,0 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity FIFO_Page_Replacement is
+    Port (
+        clk : in STD_LOGIC;
+        page_request : in STD_LOGIC_VECTOR(3 downto 0); -- Requested page number
+        page_in_memory : out STD_LOGIC_VECTOR(3 downto 0) -- Current page in memory
+    );
+end FIFO_Page_Replacement;
+
+architecture Behavioral of FIFO_Page_Replacement is
+    type Memory_Type is array (0 to 3) of STD_LOGIC_VECTOR(3 downto 0);
+    signal memory : Memory_Type := (others => "0000");
+
+    signal head : integer range 0 to 3 := 0;
+    signal tail : integer range 0 to 3 := 0;
+begin
+    process (clk)
+    begin
+        if rising_edge(clk) then
+            -- Check if page is already in memory
+            if not (page_request = memory(0) or page_request = memory(1) or page_request = memory(2) or page_request = memory(3)) then
+                -- Page fault, replace page using FIFO
+                memory(head) <= page_request;
+                head <= (head + 1) mod 4;
+                tail <= (tail + 1) mod 4;
+            end if;
+
+            -- Output the current pages in memory
+            page_in_memory <= memory(tail);
+        end if;
+    end process;
+end Behavioral;
