@@ -1,0 +1,37 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity DecimalToBCD_Combinational is
+    Port (
+        decimal : in STD_LOGIC_VECTOR(7 downto 0); -- Decimal input (binary, max 8 bits)
+        bcd : out STD_LOGIC_VECTOR(11 downto 0) -- BCD output (3 digits, 4 bits each)
+    );
+end DecimalToBCD_Combinational;
+
+architecture Behavioral of DecimalToBCD_Combinational is
+begin
+    process(decimal)
+        variable temp_decimal : INTEGER range 0 to 255; -- Temporary integer for conversion
+        variable ones : INTEGER range 0 to 9; -- Ones place
+        variable tens : INTEGER range 0 to 9; -- Tens place
+        variable hundreds : INTEGER range 0 to 9; -- Hundreds place
+        variable temp_bcd : STD_LOGIC_VECTOR(11 downto 0); -- Temporary BCD output
+    begin
+        -- Convert binary input to integer
+        temp_decimal := to_integer(unsigned(decimal));
+
+        -- Perform decimal to BCD conversion
+        ones := temp_decimal mod 10;
+        tens := (temp_decimal / 10) mod 10;
+        hundreds := temp_decimal / 100;
+
+        -- Assign to temporary BCD output
+        temp_bcd(3 downto 0) := std_logic_vector(to_unsigned(ones, 4));
+        temp_bcd(7 downto 4) := std_logic_vector(to_unsigned(tens, 4));
+        temp_bcd(11 downto 8) := std_logic_vector(to_unsigned(hundreds, 4));
+
+        -- Assign result to output
+        bcd <= temp_bcd;
+    end process;
+end Behavioral;
