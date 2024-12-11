@@ -1,0 +1,31 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity BCDtoBinary is
+    Port (
+        bcd : in STD_LOGIC_VECTOR(11 downto 0); -- BCD input (3 digits, 4 bits each)
+        binary : out STD_LOGIC_VECTOR(7 downto 0) -- Binary output (8 bits)
+    );
+end BCDtoBinary;
+
+architecture Behavioral of BCDtoBinary is
+    signal hundreds : INTEGER range 0 to 9 := 0; -- Hundreds digit
+    signal tens : INTEGER range 0 to 9 := 0; -- Tens digit
+    signal ones : INTEGER range 0 to 9 := 0; -- Ones digit
+    signal temp_binary : INTEGER range 0 to 255 := 0; -- Temporary binary value
+begin
+    process(bcd)
+    begin
+        -- Extract BCD digits
+        hundreds <= to_integer(unsigned(bcd(11 downto 8))); -- Most significant 4 bits (hundreds)
+        tens <= to_integer(unsigned(bcd(7 downto 4))); -- Middle 4 bits (tens)
+        ones <= to_integer(unsigned(bcd(3 downto 0))); -- Least significant 4 bits (ones)
+        
+        -- Calculate binary equivalent
+        temp_binary <= (hundreds * 100) + (tens * 10) + ones;
+        
+        -- Assign result to binary output
+        binary <= std_logic_vector(to_unsigned(temp_binary, 8));
+    end process;
+end Behavioral;
