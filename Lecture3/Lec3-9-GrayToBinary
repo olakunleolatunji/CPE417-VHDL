@@ -1,0 +1,28 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity GrayToBinary is
+    Port (
+        gray_in : in STD_LOGIC_VECTOR(3 downto 0); -- 4-bit Gray code input
+        binary_out : out STD_LOGIC_VECTOR(3 downto 0) -- 4-bit Binary output
+    );
+end GrayToBinary;
+
+architecture Behavioral of GrayToBinary is
+begin
+    process(gray_in)
+        variable binary_temp : STD_LOGIC_VECTOR(3 downto 0);
+    begin
+        -- The most significant bit (MSB) of Gray code is the same as Binary
+        binary_temp(3) := gray_in(3);
+        
+        -- Compute the remaining bits
+        binary_temp(2) := binary_temp(3) xor gray_in(2);
+        binary_temp(1) := binary_temp(2) xor gray_in(1);
+        binary_temp(0) := binary_temp(1) xor gray_in(0);
+        
+        -- Assign the result to the output
+        binary_out <= binary_temp;
+    end process;
+end Behavioral;
