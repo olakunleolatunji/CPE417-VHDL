@@ -1,0 +1,21 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Boolean_Algebra is
+    Port (
+        A : in STD_LOGIC;
+        B : in STD_LOGIC;
+        AND_OUT : out STD_LOGIC;
+        OR_OUT : out STD_LOGIC;
+        NOT_A : out STD_LOGIC;
+        XOR_OUT : out STD_LOGIC
+    );
+end Boolean_Algebra;
+
+architecture Behavioral of Boolean_Algebra is
+begin
+    AND_OUT <= A AND B;
+    OR_OUT <= A OR B;
+    NOT_A <= NOT A;
+    XOR_OUT <= A XOR B;
+end Behavioral;
