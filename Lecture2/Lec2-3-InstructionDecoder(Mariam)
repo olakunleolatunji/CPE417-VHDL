@@ -1,0 +1,25 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity instruction_decoder is
+    Port (
+        Instruction : in STD_LOGIC_VECTOR(31 downto 0);
+        Opcode : out STD_LOGIC_VECTOR(5 downto 0);
+        RS1 : out STD_LOGIC_VECTOR(4 downto 0);
+        RS2 : out STD_LOGIC_VECTOR(4 downto 0);
+        Immediate : out STD_LOGIC_VECTOR(15 downto 0)
+    );
+end instruction_decoder;
+
+architecture DECODER_INSTRUCTION of instruction_decoder is
+begin
+    process(Instruction)
+    begin
+        Opcode <= Instruction(31 downto 26);
+        RS1 <= Instruction(25 downto 21);
+        RS2 <= Instruction(20 downto 16);
+        Immediate <= Instruction(15 downto 0);
+    end process;
+end DECODER_INSTRUCTION;
