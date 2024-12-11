@@ -1,0 +1,15 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity and_gate is -- here we begin
+    port (
+        X: in std_logic;
+        Y: in std_logic;
+        Z: out std_logic
+    );
+end and_gate;
+
+architecture AND_GATE of and_gate is
+begin
+    Z <= X AND Y;
+end AND_GATE; -- this is the end of the code
