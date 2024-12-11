@@ -1,0 +1,33 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity SR_FlipFlop is
+    Port (
+        CLK : in STD_LOGIC;
+        RESET : in STD_LOGIC;
+        S : in STD_LOGIC;
+        R : in STD_LOGIC;
+        Q : out STD_LOGIC
+    );
+end SR_FlipFlop;
+
+architecture Behavioral of SR_FlipFlop is
+    signal Q_internal : STD_LOGIC := '0';
+begin
+    process(CLK, RESET)
+    begin
+        if RESET = '1' then
+            Q_internal <= '0'; -- Reset output
+        elsif rising_edge(CLK) then
+            if S = '1' and R = '0' then
+                Q_internal <= '1'; -- Set
+            elsif S = '0' and R = '1' then
+                Q_internal <= '0'; -- Reset
+            elsif S = '1' and R = '1' then
+                Q_internal <= 'X'; -- Invalid condition
+            end if;
+        end if;
+    end process;
+
+    Q <= Q_internal;
+end Behavioral;
