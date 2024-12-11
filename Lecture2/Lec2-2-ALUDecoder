@@ -1,0 +1,26 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity ALU_Decoder is
+    Port (
+        Opcode : in STD_LOGIC_VECTOR(5 downto 0);
+        ALU_Op : out STD_LOGIC_VECTOR(2 downto 0)
+    );
+end ALU_Decoder;
+
+architecture Behavioral of ALU_Decoder is
+begin
+    process(Opcode)
+    begin
+        case Opcode is
+            when "000000" => ALU_Op <= "000"; -- ADD
+            when "000001" => ALU_Op <= "001"; -- SUB
+            when "000010" => ALU_Op <= "010"; -- AND
+            when "000011" => ALU_Op <= "011"; -- OR
+            when "000100" => ALU_Op <= "100"; -- XOR
+            when others => ALU_Op <= "111";   -- NOP (No Operation)
+        end case;
+    end process;
+end Behavioral;
