@@ -1,0 +1,30 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity T_FlipFlop is
+    Port (
+        CLK : in STD_LOGIC;
+        RESET : in STD_LOGIC;
+        T : in STD_LOGIC;
+        Q : out STD_LOGIC
+    );
+end T_FlipFlop;
+
+architecture Behavioral of T_FlipFlop is
+    signal Q_internal : STD_LOGIC := '0';
+begin
+    process(CLK, RESET)
+    begin
+        if RESET = '1' then
+            Q_internal <= '0'; -- Reset output
+        elsif rising_edge(CLK) then
+            if T = '1' then
+                Q_internal <= not Q_internal; -- Toggle
+            else
+                Q_internal <= Q_internal; -- Hold
+            end if;
+        end if;
+    end process;
+
+    Q <= Q_internal;
+end Behavioral;
