@@ -1,0 +1,44 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Write_Through_Cache is
+    Port (
+        clk : in STD_LOGIC;
+        address : in STD_LOGIC_VECTOR(7 downto 0); -- Memory address
+        data_in : in STD_LOGIC_VECTOR(7 downto 0); -- Data to write
+        data_out : out STD_LOGIC_VECTOR(7 downto 0); -- Data from cache
+        write_enable : in STD_LOGIC -- Write enable signal
+    );
+end Write_Through_Cache;
+
+architecture Behavioral of Write_Through_Cache is
+    -- Cache and memory definitions
+    type Cache_Type is array (0 to 15) of STD_LOGIC_VECTOR(7 downto 0); -- 16 entries in cache
+    signal cache_data : Cache_Type := (others => (others => '0'));
+
+    type Memory_Type is array (0 to 255) of STD_LOGIC_VECTOR(7 downto 0); -- 256 entries in memory
+    signal memory : Memory_Type := (others => (others => '0'));
+begin
+    process (clk)
+        variable index : integer range 0 to 15; -- Cache index
+        variable mem_addr : integer range 0 to 255; -- Memory address
+    begin
+        if rising_edge(clk) then
+            -- Extract index (4 LSBs) for cache, for 16 cache entries
+            index := to_integer(unsigned(address(3 downto 0)));
+
+            -- Convert full address to memory address (0 to 255)
+            mem_addr := to_integer(unsigned(address));
+
+            if write_enable = '1' then
+                -- Write-through policy: Write data to both cache and memory
+                cache_data(index) <= data_in;
+                memory(mem_addr) <= data_in;
+            else
+                -- Read from cache
+                data_out <= cache_data(index);
+            end if;
+        end if;
+    end process;
+end Behavioral;
