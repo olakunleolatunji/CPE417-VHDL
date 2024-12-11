@@ -1,0 +1,43 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity Coprocessor is
+    Port (
+        clk : in STD_LOGIC;
+        start : in STD_LOGIC;
+        op_select : in STD_LOGIC_VECTOR(1 downto 0); -- Operation select (00 = add, 01 = subtract)
+        data_a : in STD_LOGIC_VECTOR(7 downto 0);
+        data_b : in STD_LOGIC_VECTOR(7 downto 0);
+        result : out STD_LOGIC_VECTOR(7 downto 0);
+        done : out STD_LOGIC
+    );
+end Coprocessor;
+
+architecture Behavioral of Coprocessor is
+    signal result_internal : STD_LOGIC_VECTOR(7 downto 0);
+    signal operation_done : STD_LOGIC := '0';
+begin
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if start = '1' then
+                case op_select is
+                    when "00" => -- Add
+                        result_internal <= data_a + data_b;
+                    when "01" => -- Subtract
+                        result_internal <= data_a - data_b;
+                    when others => -- Default case
+                        result_internal <= (others => '0');
+                end case;
+                operation_done <= '1';
+            else
+                operation_done <= '0';
+            end if;
+        end if;
+    end process;
+
+    result <= result_internal;
+    done <= operation_done;
+end Behavioral;
