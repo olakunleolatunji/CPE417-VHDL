@@ -1,0 +1,20 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Excess3ToDecimal is
+    Port (
+        excess3_in : in STD_LOGIC_VECTOR(3 downto 0); -- 4-bit Excess-3 input
+        decimal_out : out STD_LOGIC_VECTOR(3 downto 0) -- 4-bit Decimal output
+    );
+end Excess3ToDecimal;
+
+architecture Behavioral of Excess3ToDecimal is
+begin
+    process(excess3_in)
+    begin
+        -- Convert Excess-3 input to integer and subtract 3 to get the decimal value
+        -- Convert the result back to a 4-bit STD_LOGIC_VECTOR
+        decimal_out <= std_logic_vector(to_unsigned(to_integer(unsigned(excess3_in)) - 3, 4));
+    end process;
+end Behavioral;
