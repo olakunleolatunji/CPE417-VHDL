@@ -1,0 +1,39 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity ALU_RISC is
+    Port (
+        A : in STD_LOGIC_VECTOR(7 downto 0);  -- Operand A
+        B : in STD_LOGIC_VECTOR(7 downto 0);  -- Operand B
+        Op : in STD_LOGIC_VECTOR(2 downto 0); -- Operation code
+        Result : out STD_LOGIC_VECTOR(7 downto 0); -- Result
+        Zero : out STD_LOGIC                    -- Zero flag
+    );
+end ALU_RISC;
+
+architecture Behavioral of ALU_RISC is
+    signal temp_result : STD_LOGIC_VECTOR(7 downto 0); -- Temporary signal for Result
+begin
+    process (A, B, Op)
+    begin
+        case Op is
+            when "000" => temp_result <= A + B;         -- Addition
+            when "001" => temp_result <= A - B;         -- Subtraction
+            when "010" => temp_result <= A and B;       -- AND
+            when "011" => temp_result <= A or B;        -- OR
+            when "100" => temp_result <= not A;         -- NOT
+            when others => temp_result <= (others => '0');
+        end case;
+
+        Result <= temp_result; -- Assigning the temporary result to the output
+
+        -- Zero flag is set if result is zero
+        if temp_result = "00000000" then
+            Zero <= '1';
+        else
+            Zero <= '0';
+        end if;
+    end process;
+end Behavioral;
